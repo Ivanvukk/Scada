@@ -136,57 +136,6 @@ public class Tag : Entity
 
     public Tag()
     {
-        ValueTimestamp = DateTime.UtcNow;
-    }
 
-    /// <summary>
-    /// Gets the recommended DataAccess for a given TagType based on business rules.
-    /// </summary>
-    public static DataAccess GetRecommendedDataAccess(TagType tagType)
-    {
-        return tagType switch
-        {
-            TagType.Input => DataAccess.ReadOnly,
-            TagType.Calculated => DataAccess.ReadOnly,
-            TagType.Output => DataAccess.ReadWrite,
-            TagType.Virtual => DataAccess.ReadWrite,
-            _ => DataAccess.ReadWrite
-        };
-    }
-
-    /// <summary>
-    /// Validates the tag configuration and returns validation errors if any.
-    /// </summary>
-    public IEnumerable<string> Validate()
-    {
-        var errors = new List<string>();
-
-        // Rule: Calculated tags must be ReadOnly
-        if (TagType == TagType.Calculated && DataAccess != DataAccess.ReadOnly)
-        {
-            errors.Add("Calculated tags must have ReadOnly access.");
-        }
-
-        // Rule: Input tags should be ReadOnly
-        if (TagType == TagType.Input && DataAccess != DataAccess.ReadOnly)
-        {
-            errors.Add("Input tags should have ReadOnly access.");
-        }
-
-        // Rule: Output tags should not be WriteOnly (need to read back status)
-        if (TagType == TagType.Output && DataAccess == DataAccess.WriteOnly)
-        {
-            errors.Add("Output tags should not be WriteOnly (need to read back status).");
-        }
-
-        return errors;
-    }
-
-    /// <summary>
-    /// Applies the recommended DataAccess based on the current TagType.
-    /// </summary>
-    public void ApplyRecommendedDataAccess()
-    {
-        DataAccess = GetRecommendedDataAccess(TagType);
     }
 }
